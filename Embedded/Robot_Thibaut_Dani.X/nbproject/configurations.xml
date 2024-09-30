@@ -22,8 +22,19 @@
       <itemPath>ChipConfig.h</itemPath>
       <itemPath>IO.c</itemPath>
       <itemPath>IO.h</itemPath>
+      <itemPath>timer.c</itemPath>
+      <itemPath>timer.h</itemPath>
+      <itemPath>Robot.h</itemPath>
+      <itemPath>ToolBox.c</itemPath>
+      <itemPath>ToolBox.h</itemPath>
+      <itemPath>PWM.c</itemPath>
+      <itemPath>PWM.h</itemPath>
+      <itemPath>Robot.c</itemPath>
     </logicalFolder>
   </logicalFolder>
+  <sourceRootList>
+    <Elem>.</Elem>
+  </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="default" type="2">
@@ -197,6 +208,16 @@
         <property key="relaxed-math" value="false"/>
         <property key="save-temps" value="false"/>
       </C30Global>
+      <ICD4Tool>
+        <property key="memories.programmemory.ranges" value="0-7fffff"/>
+        <property key="programmerToGoFilePath"
+                  value="C:/GitHub/Seatech_Thibaut_Dani_Julien_Gaillard/Embedded/Robot_Thibaut_Dani.X/debug/default/Robot_Thibaut_Dani_ptg"/>
+      </ICD4Tool>
+      <Tool>
+        <property key="memories.programmemory.ranges" value="0-7fffff"/>
+        <property key="programmerToGoFilePath"
+                  value="C:/GitHub/Seatech_Thibaut_Dani_Julien_Gaillard/Embedded/Robot_Thibaut_Dani.X/debug/default/Robot_Thibaut_Dani_ptg"/>
+      </Tool>
     </conf>
   </confs>
 </configurationDescriptor>
