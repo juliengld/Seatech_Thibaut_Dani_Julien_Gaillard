@@ -1,6 +1,7 @@
 #include <xc.h>
 #include "timer.h"
 #include "IO.h"
+#include "PWM.h"
 //Initialisation d?un timer 16 bits
 
 void InitTimer1(void) {
@@ -12,7 +13,7 @@ void InitTimer1(void) {
     //01 = 1:8 prescale value
     //00 = 1:1 prescale value
     T1CONbits.TCS = 0; //clock source = internal clock
-    PR1 = 0x1D4C;
+    PR1 = 30000;
     IFS0bits.T1IF = 0; // Clear Timer Interrupt Flag
     IEC0bits.T1IE = 1; // Enable Timer interrupt
     T1CONbits.TON = 1; // Enable Timer
@@ -22,6 +23,7 @@ void InitTimer1(void) {
 void __attribute__((interrupt, no_auto_psv)) _T1Interrupt(void) {
     IFS0bits.T1IF = 0;
     LED_BLANCHE_1 = !LED_BLANCHE_1;
+    PWMUpdateSpeed();
 }
 //Initialisation d?un timer 32 bits
 
@@ -42,7 +44,20 @@ void InitTimer23(void) {
 }
 //Interruption du timer 32 bits sur 2-3
 
+unsigned char toggle = 0;
+//Interruption du timer 32 bits sur 2-3
 void __attribute__((interrupt, no_auto_psv)) _T3Interrupt(void) {
     IFS0bits.T3IF = 0; // Clear Timer3 Interrupt Flag
-    LED_ORANGE_1 = !LED_ORANGE_1;
+    if(toggle == 0){
+        PWMSetSpeedConsigne(20, MOTEUR_DROIT);
+        PWMSetSpeedConsigne(20, MOTEUR_GAUCHE);
+
+        toggle = 1;
+    }
+    else{
+        PWMSetSpeedConsigne(-20, MOTEUR_DROIT);
+        PWMSetSpeedConsigne(-20, MOTEUR_GAUCHE);
+        toggle = 0;
+    }
 }
+

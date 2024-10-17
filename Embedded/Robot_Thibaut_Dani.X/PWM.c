@@ -1,6 +1,9 @@
 #include <xc.h>
 #include "IO.h"
 #include "PWM.h"
+#include "Robot.h"
+#include "ToolBox.h"
+
 #define PWMPER 24.0
 
 void InitPWM(void) {
@@ -17,10 +20,75 @@ void InitPWM(void) {
     FCLCON2 = 0x0003; //éDsactive la gestion des faults
     /* Enable PWM Module */
     PTCONbits.PTEN = 1;
+    
+    robotState.acceleration = 1;
 }
 double talon = 50;
 
-void PWMSetSpeed(float vitesseEnPourcents) {
-    PDC1 = vitesseEnPourcents * PWMPER + talon;
-    SDC1 = talon;
+/* void PWMSetSpeed(float vitesseEnPourcents, int numeroMoteur) {
+    if (numeroMoteur == MOTEUR_DROIT) {
+        if (vitesseEnPourcents > 0) {
+            PDC1 = vitesseEnPourcents * PWMPER + talon;
+            SDC1 = talon;
+        } else {
+            SDC1 = -vitesseEnPourcents * PWMPER + talon;
+            PDC1 = talon;
+        }
+    } else if (numeroMoteur == MOTEUR_GAUCHE) {
+        if (vitesseEnPourcents > 0) {
+            PDC2 = vitesseEnPourcents * PWMPER + talon;
+            SDC2 = talon;
+        } else {
+            SDC2 = -vitesseEnPourcents * PWMPER + talon;
+            PDC2 = talon;
+        }
+    }
 }
+  */
+
+void PWMUpdateSpeed(){
+// Cette fonction est appelee sur timer et permet de suivre des rampes d acceleration
+    if (robotState.vitesseGaucheCommandeCourante < robotState.vitesseGaucheConsigne)
+        robotState.vitesseGaucheCommandeCourante = Min(
+        robotState.vitesseGaucheCommandeCourante + robotState.acceleration,
+        robotState.vitesseGaucheConsigne);
+    if (robotState.vitesseGaucheCommandeCourante > robotState.vitesseGaucheConsigne)
+        robotState.vitesseGaucheCommandeCourante = Max(
+        robotState.vitesseGaucheCommandeCourante - robotState.acceleration,
+        robotState.vitesseGaucheConsigne);
+    if (robotState.vitesseGaucheCommandeCourante > 0){
+        PDC1 = robotState.vitesseGaucheCommandeCourante * PWMPER + talon;
+        SDC1 = talon;
+    } else {
+        PDC1 = talon;
+        SDC1 = -robotState.vitesseGaucheCommandeCourante * PWMPER + talon;
+    }
+    if (robotState.vitesseDroiteCommandeCourante < robotState.vitesseDroiteConsigne)
+        robotState.vitesseDroiteCommandeCourante = Min(
+        robotState.vitesseDroiteCommandeCourante + robotState.acceleration,
+        robotState.vitesseDroiteConsigne);
+    if (robotState.vitesseDroiteCommandeCourante > robotState.vitesseDroiteConsigne)
+        robotState.vitesseDroiteCommandeCourante = Max(
+        robotState.vitesseDroiteCommandeCourante - robotState.acceleration,
+        robotState.vitesseDroiteConsigne);
+    if (robotState.vitesseDroiteCommandeCourante >= 0){
+        PDC2 = robotState.vitesseDroiteCommandeCourante * PWMPER + talon;
+        SDC2 = talon;
+    }
+    else{
+        PDC2 = talon;
+        SDC2 = -robotState.vitesseDroiteCommandeCourante * PWMPER + talon;
+    }
+}
+
+void PWMSetSpeedConsigne (int vitesseEnPourcents, int numeroMoteur){
+    if (numeroMoteur == MOTEUR_DROIT){
+        robotState.vitesseDroiteConsigne = vitesseEnPourcents;
+    }
+    else if(numeroMoteur == MOTEUR_GAUCHE){
+        robotState.vitesseGaucheConsigne = vitesseEnPourcents;
+    }
+    
+}
+
+

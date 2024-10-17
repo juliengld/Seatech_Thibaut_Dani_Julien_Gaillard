@@ -209,11 +209,13 @@
         <property key="save-temps" value="false"/>
       </C30Global>
       <ICD4Tool>
+        <property key="debugoptions.useswbreakpoints" value="true"/>
         <property key="memories.programmemory.ranges" value="0-7fffff"/>
         <property key="programmerToGoFilePath"
                   value="C:/GitHub/Seatech_Thibaut_Dani_Julien_Gaillard/Embedded/Robot_Thibaut_Dani.X/debug/default/Robot_Thibaut_Dani_ptg"/>
       </ICD4Tool>
       <Tool>
+        <property key="debugoptions.useswbreakpoints" value="true"/>
         <property key="memories.programmemory.ranges" value="0-7fffff"/>
         <property key="programmerToGoFilePath"
                   value="C:/GitHub/Seatech_Thibaut_Dani_Julien_Gaillard/Embedded/Robot_Thibaut_Dani.X/debug/default/Robot_Thibaut_Dani_ptg"/>
