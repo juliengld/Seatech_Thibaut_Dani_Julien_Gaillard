@@ -201,72 +201,116 @@ void OperatingSystemLoop(void) {
             PWMSetSpeedConsigne(0, MOTEUR_DROIT);
             PWMSetSpeedConsigne(0, MOTEUR_GAUCHE);
             stateRobot = STATE_ATTENTE_EN_COURS;
+            break;
+
         case STATE_ATTENTE_EN_COURS:
             if (timestamp > 1000)
                 stateRobot = STATE_AVANCE;
             break;
+
         case STATE_AVANCE:
             PWMSetSpeedConsigne(-20, MOTEUR_DROIT);
             PWMSetSpeedConsigne(20, MOTEUR_GAUCHE);
             stateRobot = STATE_AVANCE_EN_COURS;
             break;
+
         case STATE_AVANCE_EN_COURS:
             SetNextRobotStateInAutomaticMode();
             break;
-        case STATE_TOURNE_GAUCHE_EN_COURS:
+
+        case STATE_TOURNE_SUR_PLACE:
+            PWMSetSpeedConsigne(-15, MOTEUR_DROIT);
+            PWMSetSpeedConsigne(15, MOTEUR_GAUCHE);
+            stateRobot = STATE_TOURNE_SUR_PLACE_EN_COURS;
+            break;
+
+        case STATE_TOURNE_SUR_PLACE_EN_COURS:
             SetNextRobotStateInAutomaticMode();
             break;
-        case STATE_TOURNE_DROITE_EN_COURS:
-            SetNextRobotStateInAutomaticMode();
-            break;
+
         case STATE_TOURNE_SUR_PLACE_GAUCHE:
             PWMSetSpeedConsigne(15, MOTEUR_DROIT);
             PWMSetSpeedConsigne(-15, MOTEUR_GAUCHE);
             stateRobot = STATE_TOURNE_SUR_PLACE_GAUCHE_EN_COURS;
             break;
+
         case STATE_TOURNE_SUR_PLACE_GAUCHE_EN_COURS:
             SetNextRobotStateInAutomaticMode();
             break;
+
         case STATE_TOURNE_SUR_PLACE_DROITE:
             PWMSetSpeedConsigne(-15, MOTEUR_DROIT);
             PWMSetSpeedConsigne(15, MOTEUR_GAUCHE);
             stateRobot = STATE_TOURNE_SUR_PLACE_DROITE_EN_COURS;
             break;
+
         case STATE_TOURNE_SUR_PLACE_DROITE_EN_COURS:
             SetNextRobotStateInAutomaticMode();
-            break;   
+            break;
+
+        case STATE_TOURNE_DROITE:
+            PWMSetSpeedConsigne(-10, MOTEUR_DROIT);
+            PWMSetSpeedConsigne(20, MOTEUR_GAUCHE);
+            stateRobot = STATE_TOURNE_DROITE_EN_COURS;
+            break;
+
+        case STATE_TOURNE_DROITE_EN_COURS:
+            SetNextRobotStateInAutomaticMode();
+            break;
+
         case STATE_TOURNE_GAUCHE:
-            PWMSetSpeedConsigne(15, MOTEUR_DROIT);
-            PWMSetSpeedConsigne(7, MOTEUR_GAUCHE);
+            PWMSetSpeedConsigne(-20, MOTEUR_DROIT);
+            PWMSetSpeedConsigne(10, MOTEUR_GAUCHE);
             stateRobot = STATE_TOURNE_GAUCHE_EN_COURS;
             break;
-        case STATE_TOURNE_DROITE:
-            PWMSetSpeedConsigne(7, MOTEUR_DROIT);
+
+        case STATE_TOURNE_GAUCHE_EN_COURS:
+            SetNextRobotStateInAutomaticMode();
+            break;
+
+        case STATE_TOURNE_DROITE_LEGER:
+            PWMSetSpeedConsigne(-15, MOTEUR_DROIT);
+            PWMSetSpeedConsigne(20, MOTEUR_GAUCHE);
+            stateRobot = STATE_TOURNE_DROITE_LEGER_EN_COURS;
+            break;
+
+        case STATE_TOURNE_DROITE_LEGER_EN_COURS:
+            SetNextRobotStateInAutomaticMode();
+            break;
+
+        case STATE_TOURNE_GAUCHE_LEGER:
+            PWMSetSpeedConsigne(-20, MOTEUR_DROIT);
             PWMSetSpeedConsigne(15, MOTEUR_GAUCHE);
-            stateRobot = STATE_TOURNE_DROITE_EN_COURS;
-            break;  
+            stateRobot = STATE_TOURNE_GAUCHE_LEGER_EN_COURS;
+            break;
+
+        case STATE_TOURNE_GAUCHE_LEGER_EN_COURS:
+            SetNextRobotStateInAutomaticMode();
+            break;
+
+        case STATE_AVANCE_PRUDENT:
+            PWMSetSpeedConsigne(-10, MOTEUR_DROIT);
+            PWMSetSpeedConsigne(10, MOTEUR_GAUCHE);
+            stateRobot = STATE_AVANCE_PRUDENT_EN_COURS;
+            break;
+
+        case STATE_AVANCE_PRUDENT_EN_COURS:
+            SetNextRobotStateInAutomaticMode();
+            break;
+
         case STATE_RECULE:
-            PWMSetSpeedConsigne(-18, MOTEUR_DROIT);
+            PWMSetSpeedConsigne(20, MOTEUR_DROIT);
             PWMSetSpeedConsigne(-20, MOTEUR_GAUCHE);
             stateRobot = STATE_RECULE_EN_COURS;
             break;
+
         case STATE_RECULE_EN_COURS:
             SetNextRobotStateInAutomaticMode();
-            break;  
-        case STATE_TOURNE_FORT_DROIT:
-            PWMSetSpeedConsigne(7, MOTEUR_DROIT);
-            PWMSetSpeedConsigne(30, MOTEUR_GAUCHE);
-            stateRobot = STATE_TOURNE_FORT_DROIT_EN_COURS;
             break;
-        case STATE_TOURNE_FORT_GAUCHE:
-            PWMSetSpeedConsigne(30, MOTEUR_DROIT);
-            PWMSetSpeedConsigne(7, MOTEUR_GAUCHE);
-            stateRobot = STATE_TOURNE_FORT_GAUCHE_EN_COURS;
-            break;
+
         default:
             stateRobot = STATE_ATTENTE;
             break;
-            
     }
 }
 
