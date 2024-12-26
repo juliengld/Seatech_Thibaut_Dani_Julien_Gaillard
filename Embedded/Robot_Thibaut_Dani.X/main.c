@@ -74,61 +74,116 @@ unsigned char stateRobot;
 unsigned char nextStateRobot = 0;
 
 void SetNextRobotStateInAutomaticMode() {
-    unsigned char positionObstacle = PAS_D_OBSTACLE;
-    //éDtermination de la position des obstacles en fonction des ééètlmtres
-    if (robotState.distanceTelemetreDroit < 30 &&
-            robotState.distanceTelemetreCentre > 20 &&
-            robotState.distanceTelemetreGauche > 30) //Obstacle àdroite
-        positionObstacle = OBSTACLE_UN_PEU_A_DROITE;
-    else if (robotState.distanceTelemetreDroit < 30 &&
-            robotState.distanceTelemetreCentre < 20 &&
-            robotState.distanceTelemetreGauche < 30)
-        positionObstacle = OBSTACLE_EN_FACE_DROIT;
-    else if (robotState.distanceTelemetreDroit > 30 &&
-            robotState.distanceTelemetreCentre > 20 &&
-            robotState.distanceTelemetreGauche < 30) //Obstacle un peu àgauche
-        positionObstacle = OBSTACLE_UN_PEU_A_GAUCHE;
-    else if (robotState.distanceTelemetreCentre < 20 &&
-            robotState.distanceTelemetreDroit < 30 &&
-            robotState.distanceTelemetreExtremeDroit < 15 ) //Obstacle en face et a doite
-        positionObstacle = OBSTACLE_EN_FACE;
-    else if (robotState.distanceTelemetreCentre < 20 &&
-            robotState.distanceTelemetreGauche < 30 &&
-            robotState.distanceTelemetreExtremeGauche < 15 ) //Obstacle en face et a gauche
-        positionObstacle = OBSTACLE_EN_FACE_GAUCHE;
-    else if (robotState.distanceTelemetreExtremeDroit > 30 &&
-            robotState.distanceTelemetreCentre > 20 &&
-            robotState.distanceTelemetreExtremeGauche > 30) //pas d?obstacle
-        positionObstacle = PAS_D_OBSTACLE;
-    else if (robotState.distanceTelemetreGauche < 30 &&
-            robotState.distanceTelemetreExtrEmeGauche < 15)
-        positionObstacle = OBSTACLE_A_GAUCHE; //a créer!!!!!!!!!!!!!!!!!! 
-    else if (robotState.distanceTelemetreDroit < 30 &&
-            robotState.distanceTelemetreExtremeDroit < 15)
-        positionObstacle = OBSTACLE_A_DROITE;
-            
-            
-    //éDtermination de lé?tat àvenir du robot
-    if (positionObstacle == PAS_D_OBSTACLE)
-        nextStateRobot = STATE_AVANCE;
-    else if (positionObstacle == OBSTACLE_EN_FACE)
-        nextStateRobot = STATE_RECULE;
-    else if (positionObstacle == OBSTACLE_A_DROITE)
-        nextStateRobot = STATE_TOURNE_GAUCHE;
-    else if (positionObstacle == OBSTACLE_A_GAUCHE)
-        nextStateRobot = STATE_TOURNE_DROITE;
-    else if (positionObstacle == OBSTACLE_EN_FACE_DROIT)
-        nextStateRobot = STATE_TOURNE_SUR_PLACE_GAUCHE;
-    else if (positionObstacle == OBSTACLE_EN_FACE_GAUCHE)
-        nextStateRobot = STATE_TOURNE_SUR_PLACE_DROITE;
-    else if (positionObstacle == OBSTACLE_A_DROITE) //de la a la faut modif 
-        nextStateRobot = STATE_TOURNE_FORT_GAUCHE;
-    else if (positionObstacle == OBSTACLE_A_GAUCHE)
-        nextStateRobot = STATE_TOURNE_FORT_DROIT;              //à la en fait 
-    //Si l?on n?est pas dans la transition de lé?tape en cours
-    if (nextStateRobot != stateRobot - 1)
-        stateRobot = nextStateRobot;
+    unsigned char capteurs = 0;
+
+    // Encodage des capteurs dans un mot binaire
+    if (robotState.distanceTelemetreExtremeGauche < 30) capteurs |= 0b10000; // Bit 4
+    if (robotState.distanceTelemetreGauche < 30) capteurs |= 0b01000;        // Bit 3
+    if (robotState.distanceTelemetreCentre < 20) capteurs |= 0b00100;        // Bit 2
+    if (robotState.distanceTelemetreDroit < 30) capteurs |= 0b00010;         // Bit 1
+    if (robotState.distanceTelemetreExtremeDroit < 30) capteurs |= 0b00001;  // Bit 0
+
+    // Gestion des états en fonction des capteurs
+    switch (capteurs) {
+        // Aucun obstacle
+        case 0b00000:
+            nextStateRobot = STATE_AVANCE;
+            break;
+
+        // Obstacle au centre uniquement
+        case 0b00100:
+            nextStateRobot = STATE_TOURNE_SUR_PLACE;
+            break;
+
+        // Obstacles simultanés à  l'Extreme gauche et à l'Extreme droite
+        case 0b10001:
+            nextStateRobot = STATE_AVANCE_PRUDENT
+            break;
+        
+        case 0b11010: // Cas extrême gauche + droite + gauche
+        case 0b11001: // Partout sauf droite et centre
+        case 0b10110: // Extreme Gauche + centre + droite
+            nextStateRobot = STATE_TOURNE_DROITE
+            break;
+        
+        case 0b01011: // Cas Extreme doite + droite + gauche 
+        case 0b10011: //Partout sauf Gauche et Centre
+        case 0b01101: // Extreme Droite + centre + gauche
+            nextStateRobot = STATE_TOURNE_GAUCHE
+            break;
+        
+        case 0b11101: //Partout sauf Droite
+        case 0b10111: // Partout sauf gauche
+        case 0b01010:// Obstacles simultanés à gauche et à droite
+        case 0b10101: // Extremes + centre
+            nextStateRobot = STATE_TOURNE_SUR_PLACE_GAUCHE; // Tourne sur place vers la gauche
+            break;
+
+        // Obstacles uniquement sur les extrêmes
+        case 0b10000: // Extrême gauche uniquement
+            nextStateRobot = STATE_TOURNE_DROITE_LEGER; // Extrême gauche : virage léger à droite
+            break;
+
+        case 0b00001: // Extrême droite uniquement
+            nextStateRobot = STATE_TOURNE_GAUCHE_LEGER; // Extrême droite : virage léger à gauche
+            break;
+
+        // Obstacle à l'extrême gauche + gauche
+        case 0b11000:
+            nextStateRobot = STATE_TOURNE_DROITE; // Tourne à droite normalement
+            break;
+
+        // Obstacle à l'extrême droite + droite
+        case 0b00011:
+            nextStateRobot = STATE_TOURNE_GAUCHE; // Tourne à gauche normalement
+            break;
+
+        // Obstacles multiples à gauche, incluant le centre
+        case 0b10100:
+        case 0b11100:
+        case 0b01100: // Gauche + Centre
+            nextStateRobot = STATE_TOURNE_DROITE;
+            break;
+
+        // Obstacles multiples à droite, incluant le centre
+        case 0b00110:
+        case 0b00111:
+        case 0b00010: // Droite + Centre
+            nextStateRobot = STATE_TOURNE_GAUCHE;
+            break;
+
+        // Obstacles partout sauf à l'extrême gauche
+        case 0b01111:
+            nextStateRobot = STATE_TOURNE_GAUCHE; // Tourner vers la droite (espace libre à gauche)
+            break;
+
+        // Obstacles partout sauf à l'extrême droite
+        case 0b11110:
+            nextStateRobot = STATE_TOURNE_DROITE; // Tourner vers la gauche (espace libre à droite)
+            break;
+
+        
+        case 0b11111: // Obstacles partout
+        case 0b01110: // Obstacles partout sauf aux extremes
+        case 0b11011: // Obstacles partout sauf au centre
+            nextStateRobot = STATE_TOURNE_SUR_PLACE;
+            break;
+
+        // Gestion générique (priorité au centre, puis gauche, puis droite)
+        default:
+            if (capteurs & 0b00100) {
+                nextStateRobot = STATE_TOURNE_SUR_PLACE; // Centre prioritaire
+            } else if (capteurs & 0b11000) {
+                nextStateRobot = STATE_TOURNE_DROITE; // Virage à droite
+            } else if (capteurs & 0b00011) {
+                nextStateRobot = STATE_TOURNE_GAUCHE; // Virage à gauche
+            } else {
+                nextStateRobot = STATE_STOP; // Sécurité par défaut
+            }
+            break;
+    }
 }
+
 
 //operatin system loop
 
