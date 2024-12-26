@@ -103,6 +103,7 @@ void SetNextRobotStateInAutomaticMode() {
         case 0b11010: // Cas extrême gauche + droite + gauche
         case 0b11001: // Partout sauf droite et centre
         case 0b10110: // Extreme Gauche + centre + droite
+        case 0b01000: // Gauche
             nextStateRobot = STATE_TOURNE_DROITE
             break;
         
@@ -112,19 +113,24 @@ void SetNextRobotStateInAutomaticMode() {
             nextStateRobot = STATE_TOURNE_GAUCHE
             break;
         
-        case 0b11101: //Partout sauf Droite
         case 0b10111: // Partout sauf gauche
         case 0b01010:// Obstacles simultanés à gauche et à droite
         case 0b10101: // Extremes + centre
             nextStateRobot = STATE_TOURNE_SUR_PLACE_GAUCHE; // Tourne sur place vers la gauche
             break;
 
+        case 0b11101:
+            nextStateRobot = STATE_TOURNE_SUR_PLACE_DROITE; // Tourne sur place vers la gauche
+            break;
+
         // Obstacles uniquement sur les extrêmes
         case 0b10000: // Extrême gauche uniquement
+        case 0b10010: // Extreme gauche + droite
             nextStateRobot = STATE_TOURNE_DROITE_LEGER; // Extrême gauche : virage léger à droite
             break;
 
         case 0b00001: // Extrême droite uniquement
+        case 0b01001: // Extreme droite + gauche
             nextStateRobot = STATE_TOURNE_GAUCHE_LEGER; // Extrême droite : virage léger à gauche
             break;
 
@@ -146,9 +152,10 @@ void SetNextRobotStateInAutomaticMode() {
             break;
 
         // Obstacles multiples à droite, incluant le centre
-        case 0b00110:
-        case 0b00111:
-        case 0b00010: // Droite + Centre
+        case 0b00110://Droite + Centre
+        case 0b00111: // Partout sauf coté gauhce
+        case 0b00010: // Droite
+        case 0b00101 // Centre + Droite
             nextStateRobot = STATE_TOURNE_GAUCHE;
             break;
 
