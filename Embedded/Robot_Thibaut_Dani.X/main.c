@@ -110,13 +110,17 @@ void SetNextRobotStateInAutomaticMode() {
             
         case 0b11100:
         case 0b10100:
-        case 0b01100:        
+        case 0b01100:  
+        case 0b10110:
+        case 0b10011:
             nextStateRobot = STATE_TOURNE_SUR_PLACE_DROITE;
             break;
             
         case 0b00111:
         case 0b00101:
         case 0b00110:
+        case 0b01101:
+        case 0b11001:
             nextStateRobot = STATE_TOURNE_SUR_PLACE_GAUCHE;
             break;
 
@@ -139,14 +143,12 @@ void SetNextRobotStateInAutomaticMode() {
         case 0b11011:
         case 0b11111:
         case 0b01110:
-        case 0b10110:
         case 0b01010:
         case 0b10101:
             nextStateRobot = STATE_RECULE_GAUCHE;
             break;
         case 0b11101:
         case 0b11110:
-        case 0b01101:
             nextStateRobot = STATE_RECULE_DROITE;
             break;
             
@@ -249,6 +251,15 @@ void OperatingSystemLoop(void) {
             break;
 
         default:
+            unsigned int timeout = 0;
+            // Réagir en cas d'obstacle critique
+            while ((robotState.distanceTelemetreCentre < 15 ||
+                    robotState.distanceTelemetreGauche < 15 ||
+                    robotState.distanceTelemetreDroit < 15) && timeout < 2) {
+                    stateRobot = STATE_TOURNE_SUR_PLACE;
+                    SetNextRobotStateInAutomaticMode();
+                    timeout++;
+            }
             stateRobot = STATE_AVANCE;
             break;
     }
