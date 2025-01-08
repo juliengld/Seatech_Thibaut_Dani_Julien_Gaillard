@@ -1,7 +1,7 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-// États principaux du robot
+// Ãtats principaux du robot
 #define STATE_ATTENTE 0
 #define STATE_ATTENTE_EN_COURS 1
 #define STATE_AVANCE 2
@@ -25,8 +25,12 @@
 #define STATE_RECULE 20
 #define STATE_RECULE_EN_COURS 21
 #define STATE_STOP 22
+#define STATE_RECULE_GAUCHE 23
+#define STATE_RECULE_DROITE 24
+#define STATE_TOURNE_SUR_PLACE_GAUCHE2 25
+#define STATE_TOURNE_SUR_PLACE_DROITE2 26
 
-// Détections des obstacles
+// DÃ©tections des obstacles
 #define PAS_D_OBSTACLE 0
 #define OBSTACLE_EXTREME_GAUCHE 0b10000
 #define OBSTACLE_GAUCHE 0b01000
