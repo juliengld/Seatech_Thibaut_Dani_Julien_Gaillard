@@ -27,6 +27,9 @@ void __attribute__((interrupt, no_auto_psv)) _T4Interrupt(void) {
     IFS1bits.T4IF = 0;
     PWMUpdateSpeed();
     ADC1StartConversionSequence();
+    if (BOUTON==1) {
+        timestamp=0;
+    }
     timestamp +=1;
     OperatingSystemLoop();
 }
@@ -35,7 +38,7 @@ void __attribute__((interrupt, no_auto_psv)) _T4Interrupt(void) {
 unsigned char toggle = 0;
 //Interruption du timer 32 bits sur 2-3
 
-}
+unsigned long timestamp = 100000;
 
 void SetFreqTimer1(float freq) {
     T1CONbits.TCKPS = 0b00; //00 = 1:1 prescaler value
