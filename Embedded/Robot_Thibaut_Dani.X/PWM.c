@@ -8,20 +8,20 @@
 
 void InitPWM(void) {
     PTCON2bits.PCLKDIV = 0b000; //Divide by 1
-    PTPER = 100 * PWMPER; //ÈPriode en pourcentage
-    //ÈRglage PWM moteur 1 sur hacheur 1
+    PTPER = 100 * PWMPER; //√©Priode en pourcentage
+    //√©Rglage PWM moteur 1 sur hacheur 1
     IOCON1bits.PMOD = 0b11; //PWM I/O pin pair is in the True Independent Output mode
     IOCON1bits.PENL = 1;
     IOCON1bits.PENH = 1;
-    FCLCON1 = 0x0003; //ÈDsactive la gestion des faults
+    FCLCON1 = 0x0003; //√©Dsactive la gestion des faults
     IOCON2bits.PMOD = 0b11; //PWM I/O pin pair is in the True Independent Output mode
     IOCON2bits.PENL = 1;
     IOCON2bits.PENH = 1;
-    FCLCON2 = 0x0003; //ÈDsactive la gestion des faults
+    FCLCON2 = 0x0003; //√©Dsactive la gestion des faults
     /* Enable PWM Module */
     PTCONbits.PTEN = 1;
     
-    robotState.acceleration = 1;
+    robotState.acceleration = 50;
 }
 double talon = 50;
 
@@ -83,7 +83,7 @@ void PWMUpdateSpeed(){
 
 void PWMSetSpeedConsigne (int vitesseEnPourcents, int numeroMoteur){
     if (numeroMoteur == MOTEUR_DROIT){
-        robotState.vitesseDroiteConsigne = vitesseEnPourcents;
+        robotState.vitesseDroiteConsigne = -vitesseEnPourcents;
     }
     else if(numeroMoteur == MOTEUR_GAUCHE){
         robotState.vitesseGaucheConsigne = vitesseEnPourcents;
