@@ -8,6 +8,8 @@
 #include "ADC.h"
 #include "robot.h"
 #include "main.h"
+#include "UART.h"
+#include "CB_TX1.h"
 
 int main(void) {
 
@@ -30,9 +32,14 @@ int main(void) {
     /**************************************************************************/
     //Initialisation timer
     /**************************************************************************/
-    InitTimer1();
+    //InitTimer1();
     //InitTimer23();
     InitTimer4();
+    
+    InitUART();
+    CB_TX1_Init();
+    CB_RX1_Init();
+    
 
 
     //robotState.acceleration=1;
@@ -76,7 +83,23 @@ int main(void) {
                 LED_VERTE_1 = 1;
             else
                 LED_VERTE_1 = 0;
-        }//eux ils ont ÃÂÃÂ©tÃÂÃÂ© mis a jour
+        }
+        
+        //unsigned char message[] = "Etat du robot: En fonctionnement\n";
+        //int messageLength = sizeof(message) - 1; // Taille du message (sans le caractère nul)
+        //SendMessage(message, messageLength);
+
+        // Délai pour éviter d'envoyer le message en boucle trop rapidement
+        //__delay32(40000000); // Délai de 1 seconde (à ajuster selon la fréquence du CPU)
+        
+        int i;
+        for(i=0; i< CB_RX1_GetDataSize(); i++)
+        {
+            unsigned char c = CB_RX1_Get();
+            SendMessage(&c,1);
+        }
+        __delay32(10000);
+
     }
 }
 
@@ -174,7 +197,6 @@ void SetNextRobotStateInAutomaticMode() {
 //operatin system loop
 
 void OperatingSystemLoop(void) {
-    unsigned int timeout = 0;
     if (timestamp>60000) {
         PWMSetSpeedConsigne(0, MOTEUR_DROIT);
         PWMSetSpeedConsigne(0, MOTEUR_GAUCHE);
@@ -250,7 +272,6 @@ void OperatingSystemLoop(void) {
             
 
         default:
-            timeout = 0;
             
             stateRobot = STATE_AVANCE;
             break;
