@@ -27,8 +27,8 @@ void InitIO() {
     _TRISH3 = 0; //LED_Verte_2
     _TRISK15 = 0; //LED_Orange_2
     _TRISA0 = 0; //LED_Blanche_2
-
-    _TRISH1 = 1;
+    
+    _TRISH1 = 0; //Bouton 
     
     
     
@@ -47,6 +47,9 @@ void InitIO() {
     UnlockIO(); // On unlock les registres d'entrées/sorties, ainsi que les registres des PPS
 
     //Assignation des remappable pins
+    _U1RXR = 78;
+    _RP79R = 0b00001; //Remappe la sortie Tx1 vers RP...
+
 
     LockIO(); // On lock les registres d'entrées/sorties, ainsi que les registres des PPS
 }
