@@ -41,5 +41,6 @@
 // Prototypes des fonctions
 void OperatingSystemLoop(void);
 void SetNextRobotStateInAutomaticMode();
+void __delay32(unsigned long cycles);
 
 #endif
